@@ -54,14 +54,18 @@ export default async function EmployerDashboard() {
   const jobs = await getJobs(employerId);
 
   return (
-    <div className="flex flex-col min-h-screen bg-muted/20">
-      <header className="px-6 h-16 flex items-center border-b bg-white">
-        <Link href="/" className="flex items-center gap-2">
-          <Shield className="w-6 h-6 text-primary" />
-          <span className="text-xl font-bold tracking-tight text-primary">AegisHire</span>
+    <div className="flex flex-col min-h-screen bg-slate-50">
+      <header className="px-6 h-16 flex items-center border-b border-white/10 bg-slate-950 sticky top-0 z-50">
+        <Link href="/" className="flex items-center gap-2 group">
+          <div className="p-1.5 bg-blue-600 rounded-lg group-hover:scale-105 transition-transform">
+            <Shield className="w-5 h-5 text-white" />
+          </div>
+          <span className="text-lg font-bold tracking-tight text-white">AegisHire</span>
         </Link>
-        <div className="ml-auto flex items-center gap-4">
-          <Button variant="ghost" size="sm" asChild><Link href="/employer">Dashboard</Link></Button>
+        <div className="ml-auto flex items-center gap-3">
+          <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-white/10" asChild>
+            <Link href="/employer">Dashboard</Link>
+          </Button>
           <AuthNav user={user} />
         </div>
       </header>
@@ -69,10 +73,10 @@ export default async function EmployerDashboard() {
       <main className="flex-1 p-6 lg:p-10 max-w-7xl mx-auto w-full">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold">Employer Dashboard</h1>
-            <p className="text-muted-foreground mt-1">Manage your interview pipelines and evaluate candidates.</p>
+            <h1 className="text-2xl font-bold text-slate-900">Employer Dashboard</h1>
+            <p className="text-slate-500 mt-1 text-sm">Manage your interview pipelines and evaluate candidates.</p>
           </div>
-          <Button asChild className="gap-2">
+          <Button asChild className="gap-2 bg-blue-600 hover:bg-blue-500 text-white border-0 shadow-sm shadow-blue-600/20">
             <Link href="/employer/jobs/new">
               <Plus className="w-4 h-4" /> Create New Job Profile
             </Link>
@@ -86,45 +90,45 @@ export default async function EmployerDashboard() {
             <StatCard title="Reports Generated" value="14" icon={<FileText className="w-4 h-4" />} />
           </div>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+          <Card className="border-slate-200 shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-slate-100 pb-4">
               <div>
-                <CardTitle>Recent Job Profiles</CardTitle>
+                <CardTitle className="text-slate-900">Recent Job Profiles</CardTitle>
                 <CardDescription>Public share links are active for these pipelines.</CardDescription>
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="divide-y">
+            <CardContent className="pt-2">
+              <div className="divide-y divide-slate-100">
                 {jobs.length === 0 ? (
-                  <div className="py-8 text-sm text-muted-foreground text-center">
+                  <div className="py-10 text-sm text-slate-400 text-center">
                     No job profiles yet. Create your first automated pipeline to get started.
                   </div>
                 ) : (
                   jobs.map((job: any) => (
-                    <div key={job.id} className="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 group">
+                    <div key={job.id} className="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-lg">{job.title}</h3>
+                          <h3 className="font-semibold text-slate-900">{job.title}</h3>
                           <Badge variant={job.publish_state === 'published' ? 'default' : 'secondary'}>
                             {job.publish_state === 'published' ? 'Published' : job.publish_state === 'archived' ? 'Archived' : 'Draft'}
                           </Badge>
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-4 text-sm text-slate-500">
                           <span className="flex items-center gap-1"><Users className="w-3 h-3" /> 0 candidates</span>
                           <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> {(job.stages || []).length} stages</span>
                           <span>Created {new Date(job.created_at).toLocaleDateString()}</span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" asChild>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Button variant="outline" size="sm" className="border-slate-200 text-slate-600 hover:bg-slate-50" asChild>
                           <Link href={job.public_slug ? `/jobs/${job.public_slug}` : `/candidate/${job.id}`}>
                             <ExternalLink className="w-4 h-4 mr-2" /> Share Link
                           </Link>
                         </Button>
-                        <Button variant="outline" size="sm" asChild>
+                        <Button variant="outline" size="sm" className="border-slate-200 text-slate-600 hover:bg-slate-50" asChild>
                           <Link href={`/employer/jobs/${job.id}`}>Manage</Link>
                         </Button>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" className="text-slate-400 hover:text-slate-600">
                           <MoreVertical className="w-4 h-4" />
                         </Button>
                       </div>
@@ -142,13 +146,13 @@ export default async function EmployerDashboard() {
 
 function StatCard({ title, value, icon }: { title: string; value: string; icon: React.ReactNode }) {
   return (
-    <Card className="bg-white">
+    <Card className="bg-white border-slate-200 shadow-sm">
       <CardContent className="p-6 flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-muted-foreground mb-1">{title}</p>
-          <h3 className="text-3xl font-bold">{value}</h3>
+          <p className="text-sm font-medium text-slate-500 mb-1">{title}</p>
+          <h3 className="text-3xl font-bold text-slate-900">{value}</h3>
         </div>
-        <div className="p-3 bg-muted rounded-full">
+        <div className="p-3 bg-blue-50 rounded-xl text-blue-600">
           {icon}
         </div>
       </CardContent>

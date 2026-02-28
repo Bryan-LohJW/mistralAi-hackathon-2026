@@ -7,7 +7,6 @@ import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Briefcase, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -44,7 +43,6 @@ export default function SignUpPage() {
       setLoading(false);
       return;
     }
-    // If Supabase requires email confirmation, signUp returns no session
     if (!data.session) {
       setLoading(false);
       router.push('/login?message=confirm_email');
@@ -64,114 +62,125 @@ export default function SignUpPage() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Create an account</CardTitle>
-        <CardDescription>Sign up and choose how you&apos;ll use AegisHire.</CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
-          {error && (
-            <div className="text-sm text-destructive bg-destructive/10 rounded-md p-3">
-              {error}
-            </div>
-          )}
+    <div className="bg-slate-900/70 border border-white/10 rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
+      <div className="mb-7">
+        <h1 className="text-2xl font-bold text-white">Create an account</h1>
+        <p className="text-slate-400 mt-1 text-sm">Sign up and choose how you&apos;ll use AegisHire.</p>
+      </div>
 
-          <div className="space-y-2">
-            <Label>I want to</Label>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => setRole('candidate')}
-                className={cn(
-                  'flex flex-col items-center gap-2 rounded-lg border-2 p-4 text-left transition-colors',
-                  role === 'candidate'
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-muted hover:border-muted-foreground/50'
-                )}
-              >
-                <User className="w-6 h-6" />
-                <span className="font-medium">Find a job</span>
-                <span className="text-xs text-muted-foreground">Apply and interview</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setRole('employer')}
-                className={cn(
-                  'flex flex-col items-center gap-2 rounded-lg border-2 p-4 text-left transition-colors',
-                  role === 'employer'
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-muted hover:border-muted-foreground/50'
-                )}
-              >
-                <Briefcase className="w-6 h-6" />
-                <span className="font-medium">Hire talent</span>
-                <span className="text-xs text-muted-foreground">Post jobs & manage candidates</span>
-              </button>
-            </div>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {error && (
+          <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+            {error}
           </div>
+        )}
 
-          <div className="space-y-2">
-            <Label htmlFor="fullName">Full name</Label>
+        {/* Role selector */}
+        <div className="space-y-2">
+          <Label className="text-slate-300 text-sm font-medium">I want to</Label>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setRole('candidate')}
+              className={cn(
+                'flex flex-col items-center gap-2 rounded-xl border p-4 transition-all text-center',
+                role === 'candidate'
+                  ? 'border-blue-500/70 bg-blue-500/10 text-blue-300'
+                  : 'border-white/10 bg-slate-800/40 text-slate-400 hover:border-white/20 hover:text-slate-300'
+              )}
+            >
+              <User className="w-5 h-5" />
+              <span className="font-medium text-sm">Find a job</span>
+              <span className="text-xs opacity-70">Apply and interview</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setRole('employer')}
+              className={cn(
+                'flex flex-col items-center gap-2 rounded-xl border p-4 transition-all text-center',
+                role === 'employer'
+                  ? 'border-blue-500/70 bg-blue-500/10 text-blue-300'
+                  : 'border-white/10 bg-slate-800/40 text-slate-400 hover:border-white/20 hover:text-slate-300'
+              )}
+            >
+              <Briefcase className="w-5 h-5" />
+              <span className="font-medium text-sm">Hire talent</span>
+              <span className="text-xs opacity-70">Post jobs & manage</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="fullName" className="text-slate-300 text-sm font-medium">Full name</Label>
+          <Input
+            id="fullName"
+            type="text"
+            placeholder="Jane Doe"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            autoComplete="name"
+            className="bg-slate-800/60 border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500/30 focus-visible:border-blue-500/60 h-11"
+          />
+        </div>
+
+        {role === 'employer' && (
+          <div className="space-y-1.5">
+            <Label htmlFor="companyName" className="text-slate-300 text-sm font-medium">Company name</Label>
             <Input
-              id="fullName"
+              id="companyName"
               type="text"
-              placeholder="Jane Doe"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              autoComplete="name"
+              placeholder="Acme Inc."
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              className="bg-slate-800/60 border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500/30 focus-visible:border-blue-500/60 h-11"
             />
           </div>
-          {role === 'employer' && (
-            <div className="space-y-2">
-              <Label htmlFor="companyName">Company name</Label>
-              <Input
-                id="companyName"
-                type="text"
-                placeholder="Acme Inc."
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-              />
-            </div>
-          )}
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="At least 6 characters"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              autoComplete="new-password"
-            />
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col gap-4">
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Creating account…' : 'Sign up'}
-          </Button>
-          <p className="text-sm text-muted-foreground">
-            Already have an account?{' '}
-            <Link href="/login" className="text-primary font-medium hover:underline">
-              Sign in
-            </Link>
-          </p>
-        </CardFooter>
+        )}
+
+        <div className="space-y-1.5">
+          <Label htmlFor="email" className="text-slate-300 text-sm font-medium">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            autoComplete="email"
+            className="bg-slate-800/60 border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500/30 focus-visible:border-blue-500/60 h-11"
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="password" className="text-slate-300 text-sm font-medium">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="At least 6 characters"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={6}
+            autoComplete="new-password"
+            className="bg-slate-800/60 border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500/30 focus-visible:border-blue-500/60 h-11"
+          />
+        </div>
+
+        <Button
+          type="submit"
+          className="w-full h-11 bg-blue-600 hover:bg-blue-500 text-white border-0 shadow-lg shadow-blue-600/30 font-semibold"
+          disabled={loading}
+        >
+          {loading ? 'Creating account…' : 'Create account'}
+        </Button>
+
+        <p className="text-center text-sm text-slate-400 pt-1">
+          Already have an account?{' '}
+          <Link href="/login" className="text-blue-400 font-medium hover:text-blue-300 transition-colors">
+            Sign in
+          </Link>
+        </p>
       </form>
-    </Card>
+    </div>
   );
 }
