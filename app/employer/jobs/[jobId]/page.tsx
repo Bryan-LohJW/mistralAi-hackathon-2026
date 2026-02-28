@@ -69,7 +69,8 @@ export default function JobDetails({ params }: { params: Promise<{ jobId: string
           </div>
         </div>
 
-        <Card>
+        <div className="gradient-border">
+        <Card className="border-0">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="w-5 h-5" /> Candidates
@@ -223,6 +224,7 @@ export default function JobDetails({ params }: { params: Promise<{ jobId: string
             </Table>
           </CardContent>
         </Card>
+        </div>
       </main>
     </div>
   );
@@ -230,7 +232,8 @@ export default function JobDetails({ params }: { params: Promise<{ jobId: string
 
 function StageEvaluationCard({ title, score, strengths, improvements }: any) {
   return (
-    <div className="p-4 border rounded-lg bg-white shadow-sm flex items-start justify-between gap-4">
+    <div className="gradient-border">
+    <div className="p-4 rounded-[13px] bg-white flex items-start justify-between gap-4">
       <div className="space-y-3 flex-1">
         <h4 className="font-bold">{title}</h4>
         <div className="flex flex-wrap gap-2">
@@ -246,6 +249,7 @@ function StageEvaluationCard({ title, score, strengths, improvements }: any) {
         <div className="text-2xl font-black text-primary">{score}%</div>
         <p className="text-[10px] font-bold text-muted-foreground uppercase">Score</p>
       </div>
+    </div>
     </div>
   );
 }

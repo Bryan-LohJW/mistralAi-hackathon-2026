@@ -85,12 +85,13 @@ export default async function EmployerDashboard() {
 
         <div className="grid gap-6">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <StatCard title="Total Candidates" value="20" icon={<Users className="w-4 h-4" />} />
-            <StatCard title="Active Jobs" value="2" icon={<Briefcase className="w-4 h-4" />} />
-            <StatCard title="Reports Generated" value="14" icon={<FileText className="w-4 h-4" />} />
+            <div className="gradient-border"><StatCard title="Total Candidates" value="20" icon={<Users className="w-4 h-4" />} /></div>
+            <div className="gradient-border"><StatCard title="Active Jobs" value="2" icon={<Briefcase className="w-4 h-4" />} /></div>
+            <div className="gradient-border"><StatCard title="Reports Generated" value="14" icon={<FileText className="w-4 h-4" />} /></div>
           </div>
 
-          <Card className="border-slate-200 shadow-sm">
+          <div className="gradient-border">
+          <Card className="border-0 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between border-b border-slate-100 pb-4">
               <div>
                 <CardTitle className="text-slate-900">Recent Job Profiles</CardTitle>
@@ -138,6 +139,7 @@ export default async function EmployerDashboard() {
               </div>
             </CardContent>
           </Card>
+          </div>
         </div>
       </main>
     </div>
@@ -146,7 +148,7 @@ export default async function EmployerDashboard() {
 
 function StatCard({ title, value, icon }: { title: string; value: string; icon: React.ReactNode }) {
   return (
-    <Card className="bg-white border-slate-200 shadow-sm">
+    <Card className="bg-white border-0 shadow-none">
       <CardContent className="p-6 flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-slate-500 mb-1">{title}</p>

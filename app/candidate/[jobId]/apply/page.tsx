@@ -269,7 +269,8 @@ export default function CandidateApply({ params: paramsPromise }: { params: Prom
 
         {step === 1 && (
           <div className="grid gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Card>
+            <div className="gradient-border">
+            <Card className="border-0">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileUp className="w-5 h-5 text-primary" /> Resume Submission
@@ -355,8 +356,10 @@ export default function CandidateApply({ params: paramsPromise }: { params: Prom
                 </Tabs>
               </CardContent>
             </Card>
+            </div>
 
-            <Card className={isAiProcessing ? "opacity-60 grayscale pointer-events-none transition-all" : "transition-all"}>
+            <div className="gradient-border">
+            <Card className={isAiProcessing ? "opacity-60 grayscale pointer-events-none transition-all border-0" : "transition-all border-0"}>
               <CardHeader>
                 <div className="flex justify-between items-center">
                   <CardTitle>Profile Information</CardTitle>
@@ -429,6 +432,7 @@ export default function CandidateApply({ params: paramsPromise }: { params: Prom
                 </Button>
               </CardFooter>
             </Card>
+            </div>
           </div>
         )}
 

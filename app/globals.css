@@ -68,6 +68,31 @@
 }
 /* --------------------------------------------------------------------------- */
 
+/* Gradient border wrappers -------------------------------------------------- */
+/* Use as a parent wrapper around cards; set border-0 on the inner Card */
+
+/* For light-background pages (white/light cards) */
+.gradient-border {
+  padding: 1.5px;
+  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  border-radius: 14px;
+}
+
+/* Subtle variant for secondary containers */
+.gradient-border-muted {
+  padding: 1.5px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.45) 0%, rgba(99, 102, 241, 0.35) 100%);
+  border-radius: 14px;
+}
+
+/* For dark-background pages (slate-900 cards) */
+.gradient-border-dark {
+  padding: 1.5px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.75) 0%, rgba(6, 182, 212, 0.55) 100%);
+  border-radius: 18px;
+}
+/* --------------------------------------------------------------------------- */
+
 @layer base {
   * {
     @apply border-border;

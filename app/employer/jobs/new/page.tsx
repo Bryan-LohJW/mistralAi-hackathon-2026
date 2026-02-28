@@ -159,7 +159,8 @@ export default function NewJobWizard() {
               <p className="text-muted-foreground">Enter basic job details to train the AI interviewer.</p>
             </div>
 
-            <Card>
+            <div className="gradient-border">
+            <Card className="border-0">
               <CardHeader>
                 <CardTitle>Core Details</CardTitle>
                 <CardDescription>Define the role you're hiring for.</CardDescription>
@@ -242,6 +243,7 @@ export default function NewJobWizard() {
                 </Button>
               </CardFooter>
             </Card>
+            </div>
           </div>
         ) : (
           <div className="space-y-6">
@@ -252,7 +254,8 @@ export default function NewJobWizard() {
 
             <div className="space-y-4">
               {stages.map((stage, idx) => (
-                <Card key={idx} className="relative overflow-hidden">
+                <div key={idx} className="gradient-border">
+                <Card className="relative overflow-hidden border-0">
                   <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
                   <CardHeader className="flex flex-row items-center justify-between space-y-0">
                     <div>
@@ -344,6 +347,7 @@ export default function NewJobWizard() {
                     </div>
                   </CardContent>
                 </Card>
+                </div>
               ))}
 
               {stages.length < 6 && (

@@ -69,7 +69,8 @@ export default async function CandidateDashboard() {
 
         <div className="grid gap-6">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Card className="bg-white border-slate-200 shadow-sm">
+            <div className="gradient-border">
+            <Card className="bg-white border-0 shadow-none">
               <CardContent className="p-6 flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-slate-500 mb-1">Total applications</p>
@@ -80,7 +81,9 @@ export default async function CandidateDashboard() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="bg-white border-slate-200 shadow-sm">
+            </div>
+            <div className="gradient-border">
+            <Card className="bg-white border-0 shadow-none">
               <CardContent className="p-6 flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-slate-500 mb-1">In progress</p>
@@ -91,7 +94,9 @@ export default async function CandidateDashboard() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="bg-white border-slate-200 shadow-sm">
+            </div>
+            <div className="gradient-border">
+            <Card className="bg-white border-0 shadow-none">
               <CardContent className="p-6 flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-slate-500 mb-1">Offers</p>
@@ -102,9 +107,11 @@ export default async function CandidateDashboard() {
                 </div>
               </CardContent>
             </Card>
+            </div>
           </div>
 
-          <Card className="border-slate-200 shadow-sm">
+          <div className="gradient-border">
+          <Card className="border-0 shadow-sm">
             <CardHeader className="border-b border-slate-100 pb-4">
               <CardTitle className="text-slate-900">Applications</CardTitle>
               <CardDescription>Jobs you've applied to or been invited to.</CardDescription>
@@ -171,6 +178,7 @@ export default async function CandidateDashboard() {
               )}
             </CardContent>
           </Card>
+          </div>
         </div>
       </main>
     </div>

@@ -62,7 +62,8 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="bg-slate-900/70 border border-white/10 rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
+    <div className="gradient-border-dark">
+    <div className="bg-slate-900/95 rounded-[17px] p-8 backdrop-blur-sm shadow-2xl">
       <div className="mb-7">
         <h1 className="text-2xl font-bold text-white">Create an account</h1>
         <p className="text-slate-400 mt-1 text-sm">Sign up and choose how you&apos;ll use AegisHire.</p>
@@ -181,6 +182,7 @@ export default function SignUpPage() {
           </Link>
         </p>
       </form>
+    </div>
     </div>
   );
 }

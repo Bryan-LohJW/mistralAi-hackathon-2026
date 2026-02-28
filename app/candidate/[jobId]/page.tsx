@@ -117,7 +117,8 @@ export default function CandidateLanding({ params }: { params: Promise<{ jobId: 
               </div>
 
               {/* Welcome Panel */}
-              <Card className="border-2 border-primary/5 overflow-hidden shadow-md">
+              <div className="gradient-border">
+              <Card className="border-0 overflow-hidden shadow-none">
                 <div className="h-1.5 bg-primary w-full" />
                 <CardHeader className="pb-4">
                   <CardTitle className="text-2xl">Welcome to your AI Interview</CardTitle>
@@ -171,6 +172,7 @@ export default function CandidateLanding({ params }: { params: Promise<{ jobId: 
                   </Button>
                 </CardFooter>
               </Card>
+              </div>
 
               {/* Expectations Section */}
               <div className="space-y-4">
@@ -197,7 +199,8 @@ export default function CandidateLanding({ params }: { params: Promise<{ jobId: 
 
             {/* Sidebar Pipeline Area */}
             <div className="space-y-6">
-              <Card className="sticky top-24 border-2 border-primary/10 shadow-lg">
+              <div className="gradient-border sticky top-24">
+              <Card className="border-0 shadow-none">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Zap className="w-5 h-5 text-accent fill-accent" />
@@ -230,8 +233,10 @@ export default function CandidateLanding({ params }: { params: Promise<{ jobId: 
                   </div>
                 </CardFooter>
               </Card>
+              </div>
 
-              <div className="p-5 rounded-2xl bg-white border border-primary/10 shadow-sm space-y-3">
+              <div className="gradient-border-muted">
+              <div className="p-5 rounded-[13px] bg-white space-y-3">
                 <div className="flex items-center gap-2 text-primary font-bold">
                   <Shield className="w-5 h-5" />
                   <h4 className="text-sm">Secure Assessment</h4>
@@ -239,6 +244,7 @@ export default function CandidateLanding({ params }: { params: Promise<{ jobId: 
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   AegisHire uses secure session management to protect your information and ensure a fair screening process. Your responses are stored safely.
                 </p>
+              </div>
               </div>
             </div>
           </div>

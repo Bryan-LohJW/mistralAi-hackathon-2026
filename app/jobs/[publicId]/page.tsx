@@ -125,7 +125,8 @@ export default async function PublicJobPage({ params }: { params: Params }) {
               </div>
             </div>
 
-            <Card className="border-2 border-primary/5 overflow-hidden shadow-md">
+            <div className="gradient-border">
+            <Card className="overflow-hidden shadow-none border-0">
               <div className="h-1.5 bg-primary w-full" />
               <CardHeader className="pb-4">
                 <CardTitle className="text-2xl">About this role</CardTitle>
@@ -212,10 +213,12 @@ export default async function PublicJobPage({ params }: { params: Params }) {
                 </Button>
               </CardFooter>
             </Card>
+            </div>
           </div>
 
           <div className="space-y-6">
-            <Card className="sticky top-24 border-2 border-primary/10 shadow-lg">
+            <div className="gradient-border sticky top-24">
+            <Card className="border-0 shadow-none">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Zap className="w-5 h-5 text-accent fill-accent" />
@@ -268,8 +271,10 @@ export default async function PublicJobPage({ params }: { params: Params }) {
                 </Button>
               </CardFooter>
             </Card>
+            </div>
 
-            <div className="p-5 rounded-2xl bg-white border border-primary/10 shadow-sm space-y-3">
+            <div className="gradient-border-muted">
+            <div className="p-5 rounded-[13px] bg-white space-y-3">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <Shield className="w-5 h-5" />
                 <h4 className="text-sm">Secure assessment</h4>
@@ -278,6 +283,7 @@ export default async function PublicJobPage({ params }: { params: Params }) {
                 AegisHire uses secure session management. Your responses are stored safely and
                 shared only with the hiring team at {job.company_name}.
               </p>
+            </div>
             </div>
           </div>
         </div>
