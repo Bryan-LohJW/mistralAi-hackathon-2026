@@ -6,30 +6,62 @@ export type Database = {
   public: {
     Tables: {
       // --- Employer & job modeling ---
-      employer_users: {
+      users: {
         Row: {
           id: string;
           email: string;
-          company_name: string;
-          role: 'admin' | 'recruiter' | 'hiring_manager';
           full_name: string | null;
           avatar_url: string | null;
           phone: string | null;
+          profile_summary: string | null;
+          resume_url: string | null;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
           email: string;
-          company_name: string;
-          role?: 'admin' | 'recruiter' | 'hiring_manager';
           full_name?: string | null;
           avatar_url?: string | null;
           phone?: string | null;
+          profile_summary?: string | null;
+          resume_url?: string | null;
           created_at?: string;
           updated_at?: string;
         };
-        Update: Partial<Database['public']['Tables']['employer_users']['Insert']>;
+        Update: Partial<Database['public']['Tables']['users']['Insert']>;
+      };
+
+      user_roles: {
+        Row: {
+          user_id: string;
+          role: 'employer' | 'candidate';
+        };
+        Insert: {
+          user_id: string;
+          role: 'employer' | 'candidate';
+        };
+        Update: Partial<Database['public']['Tables']['user_roles']['Insert']>;
+      };
+
+      employer_profiles: {
+        Row: {
+          id: string;
+          user_id: string;
+          company_name: string;
+          role: 'admin' | 'recruiter' | 'hiring_manager';
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          company_name: string;
+          role?: 'admin' | 'recruiter' | 'hiring_manager';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['employer_profiles']['Insert']>;
       };
       job_profiles: {
         Row: {
@@ -177,34 +209,10 @@ export type Database = {
         Update: Partial<Database['public']['Tables']['public_job_views']['Insert']>;
       };
 
-      candidate_users: {
-        Row: {
-          id: string;
-          email: string;
-          full_name: string;
-          phone: string | null;
-          profile_summary: string | null;
-          resume_url: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          email: string;
-          full_name: string;
-          phone?: string | null;
-          profile_summary?: string | null;
-          resume_url?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: Partial<Database['public']['Tables']['candidate_users']['Insert']>;
-      };
-
       job_applications: {
         Row: {
           id: string;
-          candidate_user_id: string;
+          user_id: string;
           job_profile_id: string;
           status: 'invited' | 'applied' | 'screening' | 'in_interview' | 'completed' | 'offered' | 'rejected' | 'withdrawn';
           current_stage_index: number | null;
@@ -218,7 +226,7 @@ export type Database = {
         };
         Insert: {
           id?: string;
-          candidate_user_id: string;
+          user_id: string;
           job_profile_id: string;
           status?: 'invited' | 'applied' | 'screening' | 'in_interview' | 'completed' | 'offered' | 'rejected' | 'withdrawn';
           current_stage_index?: number | null;
@@ -399,7 +407,7 @@ export type Database = {
           id: string;
           job_id: string;
           job_profile_id: string | null;
-          candidate_user_id: string | null;
+          user_id: string | null;
           name: string;
           email: string;
           education: string | null;
@@ -418,7 +426,7 @@ export type Database = {
           id?: string;
           job_id: string;
           job_profile_id?: string | null;
-          candidate_user_id?: string | null;
+          user_id?: string | null;
           name: string;
           email: string;
           education?: string | null;
@@ -463,9 +471,9 @@ export type Database = {
       };
       candidate_applications_summary: {
         Row: {
-          candidate_user_id: string;
+          user_id: string;
           email: string;
-          full_name: string;
+          full_name: string | null;
           application_id: string;
           job_profile_id: string;
           application_status: string;

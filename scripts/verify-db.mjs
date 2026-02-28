@@ -18,13 +18,14 @@ const url = process.env.SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const requiredTables = [
-  'employer_users',
+  'users',
+  'user_roles',
+  'employer_profiles',
   'job_profiles',
   'job_stages',
   'stage_question_bank',
   'job_distribution_status',
   'public_job_views',
-  'candidate_users',
   'job_applications',
   'focus_events',
   'interview_sessions',
