@@ -49,33 +49,82 @@ begin
       'invited', 'applied', 'screening', 'in_interview', 'completed', 'offered', 'rejected', 'withdrawn'
     );
   end if;
+  if not exists (select 1 from pg_type where typname = 'user_role') then
+    create type user_role as enum ('employer', 'candidate');
+  end if;
 end $$;
 
 -- =========================
--- Core employer + job schema
+-- Single users table (replaces separate employer/candidate identities)
 -- =========================
 
-create table if not exists public.employer_users (
+create table if not exists public.users (
   id uuid primary key default gen_random_uuid(),
   email text not null unique,
-  company_name text not null,
-  role employer_role not null default 'admin',
   full_name text,
   avatar_url text,
   phone text,
+  profile_summary text,
+  resume_url text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
--- Optional: add new columns to existing table without breaking
-alter table public.employer_users add column if not exists full_name text;
-alter table public.employer_users add column if not exists avatar_url text;
-alter table public.employer_users add column if not exists phone text;
-alter table public.employer_users add column if not exists updated_at timestamptz default now();
+create index if not exists users_email_idx on public.users (email);
+
+-- User roles: one user can have both 'employer' and 'candidate'
+create table if not exists public.user_roles (
+  user_id uuid not null references public.users (id) on delete cascade,
+  role user_role not null,
+  primary key (user_id, role)
+);
+
+create index if not exists user_roles_user_id_idx on public.user_roles (user_id);
+
+-- Employer profile: company affiliation for users with employer role
+-- job_profiles.employer_id points here (replaces old employer_users)
+create table if not exists public.employer_profiles (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.users (id) on delete cascade,
+  company_name text not null,
+  role employer_role not null default 'admin',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create unique index if not exists employer_profiles_user_company_idx
+  on public.employer_profiles (user_id, company_name);
+create index if not exists employer_profiles_user_id_idx on public.employer_profiles (user_id);
+
+-- Migrate from old employer_users if present (preserve ids so job_profiles.employer_id is valid)
+do $$
+begin
+  if exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'employer_users') then
+    insert into public.users (id, email, full_name, avatar_url, phone, created_at, updated_at)
+    select id, email, coalesce(full_name, company_name), avatar_url, phone, created_at, coalesce(updated_at, created_at)
+    from public.employer_users on conflict (id) do nothing;
+    insert into public.employer_profiles (id, user_id, company_name, role, created_at, updated_at)
+    select id, id, company_name, role, created_at, coalesce(updated_at, created_at) from public.employer_users
+    on conflict (id) do nothing;
+    insert into public.user_roles (user_id, role) select id, 'employer'::user_role from public.employer_users
+    on conflict (user_id, role) do nothing;
+    alter table public.job_profiles drop constraint if exists job_profiles_employer_id_fkey;
+    alter table public.job_profiles add constraint job_profiles_employer_id_fkey
+      foreign key (employer_id) references public.employer_profiles (id) on delete cascade;
+    alter table public.stage_question_bank drop constraint if exists stage_question_bank_employer_id_fkey;
+    alter table public.stage_question_bank add constraint stage_question_bank_employer_id_fkey
+      foreign key (employer_id) references public.employer_profiles (id) on delete cascade;
+    drop table if exists public.employer_users cascade;
+  end if;
+end $$;
+
+-- =========================
+-- Core job schema (employer_id → employer_profiles.id)
+-- =========================
 
 create table if not exists public.job_profiles (
   id uuid primary key default gen_random_uuid(),
-  employer_id uuid not null references public.employer_users (id) on delete cascade,
+  employer_id uuid not null references public.employer_profiles (id) on delete cascade,
   title text not null,
   company_name text not null,
   location text,
@@ -118,7 +167,7 @@ create index if not exists job_stages_job_profile_id_idx
 
 create table if not exists public.stage_question_bank (
   id uuid primary key default gen_random_uuid(),
-  employer_id uuid not null references public.employer_users (id) on delete cascade,
+  employer_id uuid not null references public.employer_profiles (id) on delete cascade,
   job_stage_id uuid references public.job_stages (id) on delete set null,
   job_profile_id uuid references public.job_profiles (id) on delete set null,
   question_text text not null,
@@ -166,30 +215,13 @@ create index if not exists public_job_views_job_profile_idx
   on public.public_job_views (job_profile_id);
 
 -- =========================
--- Candidate user profile (one row per person)
--- =========================
-
-create table if not exists public.candidate_users (
-  id uuid primary key default gen_random_uuid(),
-  email text not null unique,
-  full_name text not null,
-  phone text,
-  profile_summary text,
-  resume_url text,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create index if not exists candidate_users_email_idx on public.candidate_users (email);
-
--- =========================
--- Job applications: links candidate to job with status and stage
+-- Job applications: links user (as candidate) to job with status and stage
 -- (invited, applied, in interview, selected, rejected, etc.)
 -- =========================
 
 create table if not exists public.job_applications (
   id uuid primary key default gen_random_uuid(),
-  candidate_user_id uuid not null references public.candidate_users (id) on delete cascade,
+  user_id uuid not null references public.users (id) on delete cascade,
   job_profile_id uuid not null references public.job_profiles (id) on delete cascade,
   status application_status not null default 'applied',
   current_stage_index integer,
@@ -200,15 +232,37 @@ create table if not exists public.job_applications (
   withdrawn_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  unique (candidate_user_id, job_profile_id)
+  unique (user_id, job_profile_id)
 );
 
-create index if not exists job_applications_candidate_user_id_idx
-  on public.job_applications (candidate_user_id);
-create index if not exists job_applications_job_profile_id_idx
-  on public.job_applications (job_profile_id);
-create index if not exists job_applications_status_idx
-  on public.job_applications (status);
+alter table public.job_applications add column if not exists user_id uuid references public.users (id) on delete cascade;
+
+create index if not exists job_applications_user_id_idx on public.job_applications (user_id);
+create index if not exists job_applications_job_profile_id_idx on public.job_applications (job_profile_id);
+create index if not exists job_applications_status_idx on public.job_applications (status);
+
+-- Migrate from candidate_users: backfill users, set job_applications.user_id, drop candidate_users
+do $$
+begin
+  if exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'candidate_users') then
+    insert into public.users (id, email, full_name, phone, profile_summary, resume_url, created_at, updated_at)
+    select id, email, full_name, phone, profile_summary, resume_url, created_at, updated_at from public.candidate_users
+    on conflict (id) do nothing;
+    insert into public.user_roles (user_id, role) select id, 'candidate'::user_role from public.candidate_users
+    on conflict (user_id, role) do nothing;
+    if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'job_applications' and column_name = 'candidate_user_id') then
+      update public.job_applications set user_id = candidate_user_id where candidate_user_id is not null;
+      alter table public.job_applications drop column candidate_user_id;
+    end if;
+    alter table public.candidates drop constraint if exists candidates_candidate_user_id_fkey;
+    alter table public.candidates add column if not exists user_id uuid references public.users (id);
+    if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'candidates' and column_name = 'candidate_user_id') then
+      update public.candidates set user_id = candidate_user_id where candidate_user_id is not null;
+      alter table public.candidates drop column candidate_user_id;
+    end if;
+    drop table if exists public.candidate_users cascade;
+  end if;
+end $$;
 
 -- =========================
 -- Legacy jobs table (for candidates.job_id; app also has job_profiles)
@@ -252,9 +306,9 @@ create table if not exists public.candidates (
 -- Add job_profile_id if table already existed without it
 alter table public.candidates
   add column if not exists job_profile_id uuid references public.job_profiles (id);
--- Link legacy candidate row to candidate_users when migrating
+-- Link legacy candidate row to users (replaces candidate_user_id)
 alter table public.candidates
-  add column if not exists candidate_user_id uuid references public.candidate_users (id);
+  add column if not exists user_id uuid references public.users (id);
 
 create table if not exists public.focus_events (
   id uuid primary key default gen_random_uuid(),
@@ -389,9 +443,9 @@ group by jp.id, jp.employer_id, jp.title, jp.company_name, jp.category, jp.publi
 
 create or replace view public.candidate_applications_summary as
 select
-  cu.id as candidate_user_id,
-  cu.email,
-  cu.full_name,
+  u.id as user_id,
+  u.email,
+  u.full_name,
   ja.id as application_id,
   ja.job_profile_id,
   ja.status as application_status,
@@ -407,8 +461,8 @@ select
   jp.category as job_category,
   jp.seniority as job_seniority,
   jp.publish_state as job_publish_state
-from public.candidate_users cu
-join public.job_applications ja on ja.candidate_user_id = cu.id
+from public.users u
+join public.job_applications ja on ja.user_id = u.id
 join public.job_profiles jp on jp.id = ja.job_profile_id;
 
 -- =========================
@@ -417,10 +471,10 @@ join public.job_profiles jp on jp.id = ja.job_profile_id;
 
 create or replace view public.employer_jobs_summary as
 select
-  eu.id as employer_id,
-  eu.email as employer_email,
-  eu.company_name,
-  eu.full_name as employer_full_name,
+  ep.id as employer_id,
+  u.email as employer_email,
+  ep.company_name,
+  u.full_name as employer_full_name,
   jp.id as job_profile_id,
   jp.title,
   jp.category,
@@ -431,7 +485,8 @@ select
   coalesce(stats.num_offered, 0) as num_offered,
   coalesce(stats.num_in_interview, 0) as num_in_interview,
   coalesce(stats.num_applied, 0) as num_applied
-from public.employer_users eu
-join public.job_profiles jp on jp.employer_id = eu.id
+from public.employer_profiles ep
+join public.users u on u.id = ep.user_id
+join public.job_profiles jp on jp.employer_id = ep.id
 left join public.job_application_stats stats on stats.job_profile_id = jp.id;
 

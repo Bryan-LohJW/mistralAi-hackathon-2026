@@ -1,0 +1,3 @@
+# Python dependencies for this project.
+# This repo is primarily Node.js/Next.js; install JS deps with: npm install
+# Add any Python tooling or script dependencies below.

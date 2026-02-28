@@ -2,12 +2,15 @@ import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabaseClient';
 
 const REQUIRED_TABLES = [
-  'employer_users',
+  'users',
+  'user_roles',
+  'employer_profiles',
   'job_profiles',
   'job_stages',
   'stage_question_bank',
   'job_distribution_status',
   'public_job_views',
+  'job_applications',
   'focus_events',
   'interview_sessions',
   'tool_usage_logs',
