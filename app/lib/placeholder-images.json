@@ -1,0 +1,16 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-image",
+      "description": "Professional recruitment and AI interaction",
+      "imageUrl": "https://picsum.photos/seed/aegishire-hero/1200/600",
+      "imageHint": "recruitment technology"
+    },
+    {
+      "id": "employer-avatar",
+      "description": "Corporate Recruiter avatar",
+      "imageUrl": "https://picsum.photos/seed/recruiter-avatar/200/200",
+      "imageHint": "business avatar"
+    }
+  ]
+}
