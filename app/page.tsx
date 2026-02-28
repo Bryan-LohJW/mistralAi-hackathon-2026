@@ -33,7 +33,7 @@ export default async function Home() {
               <Link href="/employer/jobs/new">Post a Job</Link>
             </Button>
           ) : (
-            <Button asChild variant="outline" className="border-white/30 text-white hover:bg-white/10 hover:text-white">
+            <Button asChild className="bg-blue-600 hover:bg-blue-500 text-white border-0 shadow-lg shadow-blue-600/30">
               <Link href="/login">Post a Job</Link>
             </Button>
           )}
